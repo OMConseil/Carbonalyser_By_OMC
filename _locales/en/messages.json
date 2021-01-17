@@ -27,6 +27,14 @@
     "message": "Reset data",
     "description": "Reset data button"
   },
+    "export": {
+    "message": "Export",
+    "description": "Bouton d'export des données"
+  },
+  "whitelist": {
+    "message": "Whitelist",
+    "description": "Bouton d'accès à la page de whitelisting'"
+  },
   "analysisInProgress": {
     "message": "Analysis in progress. Start browsing the web, then come back here to get stats!",
     "description": "Analysis in progress message"
