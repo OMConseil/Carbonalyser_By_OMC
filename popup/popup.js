@@ -31,16 +31,24 @@ getStats = () => {
     const sortedStats = [];
 
     for (let origin in stats) {
-        total += stats[origin];
+        total += stats[origin][0];
         sortedStats.push({
             'origin': origin,
-            'byte': stats[origin]
+            'byte': stats[origin][0],
+            'time': stats[origin][1]
         });
     }
 
-    sortedStats.sort(function (a, b) {
-        return a.byte < b.byte ? 1 : a.byte > b.byte ? -1 : 0
-    });
+    if (localStorage.getItem("sortRule") == 'byTime') {
+        sortedStats.sort(function (a, b) {
+            return a.time < b.time ? 1 : a.time > b.time ? -1 : 0
+        });
+    } else {
+        sortedStats.sort(function (a, b) {
+            return a.byte < b.byte ? 1 : a.byte > b.byte ? -1 : 0
+        });
+    }
+
 
     const highestStats = sortedStats.slice(0, 4);
     let subtotal = 0;
@@ -161,19 +169,26 @@ showDataTable = () => {
     for (let origin in stats) {
         sortedStats.push({
             'origin': origin,
-            'byte': stats[origin]
+            'byte': stats[origin][0],
+            'time': stats[origin][1]
         });
     }
 
-    sortedStats.sort(function (a, b) {
-        return a.byte < b.byte ? 1 : a.byte > b.byte ? -1 : 0
-    });
-
+    if (localStorage.getItem("sortRule") == 'byTime') {
+        sortedStats.sort(function (a, b) {
+            return a.time < b.time ? 1 : a.time > b.time ? -1 : 0
+        });
+    } else {
+        sortedStats.sort(function (a, b) {
+            return a.byte < b.byte ? 1 : a.byte > b.byte ? -1 : 0
+        });
+    }
     const dataTableBody = dataTable.getElementsByTagName('tbody')[0];
 
     for (var index in sortedStats) {
 
         mbConso = toMegaByte(sortedStats[index].byte);
+
         if (mbConso > 1) {
 
             var newRow = dataTableBody.insertRow();
@@ -186,13 +201,12 @@ showDataTable = () => {
             siteCell.appendChild(newText);
 
             var timeConsoCell = newRow.insertCell();
-            var newText = document.createTextNode(i);
+            var newText = document.createTextNode(sortedStats[index].time);
             timeConsoCell.appendChild(newText);
 
             var dataConsoCell = newRow.insertCell();
             var newText = document.createTextNode(mbConso);
             dataConsoCell.appendChild(newText);
-            ++i;
         }
 
     }
@@ -294,7 +308,7 @@ sortData = () => {
 }
 
 sortTime = () => {
-    localStorage.setItem('sortRule', "byData");
+    localStorage.setItem('sortRule', "byTime");
     showDataTable();
 }
 
@@ -310,11 +324,11 @@ init = () => {
         userLocation = selectedRegion;
         selectRegion.value = selectedRegion;
     }
-    
-    if(localStorage.getItem("whitelistState") == "ON"){
-    	whitelistButton.style.cssText = "border-color: limegreen;";
-    }else{
-    	 whitelistButton.style.cssText = "border-color: red;";
+
+    if (localStorage.getItem("whitelistState") == "ON") {
+        whitelistButton.style.cssText = "border-color: limegreen;";
+    } else {
+        whitelistButton.style.cssText = "border-color: red;";
     }
 
     if (null === localStorage.getItem('stats')) {

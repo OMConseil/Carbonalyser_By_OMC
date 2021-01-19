@@ -1,24 +1,23 @@
 init = () => {
-    if(localStorage.getItem("whitelistState") == 'ON'){
-       hide(offButton);
-       show(onButton);
-    }else{
-       hide(onButton);
-       show(offButton);
+    if (localStorage.getItem("whitelistState") == 'ON') {
+        hide(offButton);
+        show(onButton);
+    } else {
+        hide(onButton);
+        show(offButton);
     }
-    
+
     showWhiteListTable();
-    
 }
 
 showWhiteListTable = () => {
-	clearWhitelistTable();
-	var whitelist = getWhitelist();
-	var i = 0;
-	const whitelistTableBody = whitelistTable.getElementsByTagName('tbody')[0];
-	for(let website in whitelist){
-	    if(whitelist[website] == 1){
-	    
+    clearWhitelistTable();
+    var whitelist = getWhitelist();
+    var i = 0;
+    const whitelistTableBody = whitelistTable.getElementsByTagName('tbody')[0];
+    for (let website in whitelist) {
+        if (whitelist[website] == 1) {
+
             var newRow = whitelistTableBody.insertRow();
             if (i % 2 == 0) {
                 newRow.style.backgroundColor = "lightgrey";
@@ -30,17 +29,19 @@ showWhiteListTable = () => {
 
             var deleteCell = newRow.insertCell();
             var newButton = document.createElement("BUTTON");
-                      
-	       newButton.classList.add('supButton');
+
+            newButton.classList.add('supButton');
             var newText = document.createTextNode("X");
             newButton.appendChild(newText);
             deleteCell.appendChild(newButton);
-            newButton.addEventListener('click',  function(){removeWebsiteFromWhitelist(website)});
+            newButton.addEventListener('click', function () {
+                removeWebsiteFromWhitelist(website)
+            });
 
-            
+
             ++i;
-	    }
-	}
+        }
+    }
 }
 
 clearWhitelistTable = () => {
@@ -68,24 +69,24 @@ whitelistOn = () => {
 }
 
 addWebsiteToWhitelist = () => {
-	var website = addSiteTextBox.value;
-	var whitelist = getWhitelist();
-	
-	whitelist[website] = "1";
+    var website = addSiteTextBox.value;
+    var whitelist = getWhitelist();
 
-	localStorage.setItem('whitelist', JSON.stringify(whitelist));
-	addSiteTextBox.value = "";
-      showWhiteListTable();
+    whitelist[website] = "1";
+
+    localStorage.setItem('whitelist', JSON.stringify(whitelist));
+    addSiteTextBox.value = "";
+    showWhiteListTable();
 
 }
 
 removeWebsiteFromWhitelist = (website) => {
-	var whitelist = getWhitelist();
-	
-	delete whitelist[website];
+    var whitelist = getWhitelist();
 
-	localStorage.setItem('whitelist', JSON.stringify(whitelist));
-	showWhiteListTable();
+    delete whitelist[website];
+
+    localStorage.setItem('whitelist', JSON.stringify(whitelist));
+    showWhiteListTable();
 }
 
 
