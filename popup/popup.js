@@ -167,7 +167,6 @@ showDataTable = () => {
 
     sortedStats.sort(function (a, b) {
         return a.byte < b.byte ? 1 : a.byte > b.byte ? -1 : 0
-
     });
 
     const dataTableBody = dataTable.getElementsByTagName('tbody')[0];
@@ -187,7 +186,7 @@ showDataTable = () => {
             siteCell.appendChild(newText);
 
             var timeConsoCell = newRow.insertCell();
-            var newText = document.createTextNode(0);
+            var newText = document.createTextNode(i);
             timeConsoCell.appendChild(newText);
 
             var dataConsoCell = newRow.insertCell();
@@ -295,7 +294,7 @@ sortData = () => {
 }
 
 sortTime = () => {
-    localStorage.setItem('sortRule', "byTime");
+    localStorage.setItem('sortRule', "byData");
     showDataTable();
 }
 
@@ -310,6 +309,12 @@ init = () => {
     if (null !== selectedRegion) {
         userLocation = selectedRegion;
         selectRegion.value = selectedRegion;
+    }
+    
+    if(localStorage.getItem("whitelistState") == "ON"){
+    	whitelistButton.style.cssText = "border-color: limegreen;";
+    }else{
+    	 whitelistButton.style.cssText = "border-color: red;";
     }
 
     if (null === localStorage.getItem('stats')) {

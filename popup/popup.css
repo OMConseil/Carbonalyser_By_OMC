@@ -220,7 +220,10 @@ sup{
 
 .supButton{
     color: red;
-    background-color: white;
     border-style: none;
     font-size: 20px;
+}
+
+#WhitelistTabSite{
+	width:90%;
 }
