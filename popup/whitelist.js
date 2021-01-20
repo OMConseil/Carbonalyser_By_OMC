@@ -19,20 +19,21 @@ showWhiteListTable = () => {
         if (whitelist[website] == 1) {
 
             var newRow = whitelistTableBody.insertRow();
-            if (i % 2 == 0) {
-                newRow.style.backgroundColor = "lightgrey";
-            }
+            
 
             var siteCell = newRow.insertCell();
             var newText = document.createTextNode(website);
             siteCell.appendChild(newText);
 
+            if (i % 2 == 0) {
+                siteCell.style.backgroundColor = "lightgrey";
+            }
+
             var deleteCell = newRow.insertCell();
             var newButton = document.createElement("BUTTON");
 
+            newButton.classList.add('button');
             newButton.classList.add('supButton');
-            var newText = document.createTextNode("X");
-            newButton.appendChild(newText);
             deleteCell.appendChild(newButton);
             newButton.addEventListener('click', function () {
                 removeWebsiteFromWhitelist(website)
