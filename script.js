@@ -44,17 +44,19 @@ setByteLengthPerOrigin = (origin, byteLength) => {
   }
 };
 
-setTimePerOrigin = (origin, time) => {
-  if (checkWhitelist(origin)) {
+setTimePerOrigin = () => {
+  if (checkWhitelist(currentTab)) {
     const stats = localStorage.getItem('stats');
     const statsJson = null === stats ? {} : JSON.parse(stats);
+    
 
-    let bytePerOrigin = undefined === statsJson[origin] ? 0 : parseInt(statsJson[origin][0]);
-    let timePerOrigin = undefined === statsJson[origin] ? 0 : statsJson[origin][1];
-    statsJson[origin] = [bytePerOrigin, timePerOrigin + time];
+    let bytePerOrigin = undefined === statsJson[currentTab] ? 0 : parseInt(statsJson[currentTab][0]);
+    let timePerOrigin = undefined === statsJson[currentTab] ? 0 : statsJson[currentTab][1];
+    statsJson[currentTab] = [bytePerOrigin, timePerOrigin + 1];
     localStorage.setItem('stats', JSON.stringify(statsJson));
   }
 };
+
 
 
 isChrome = () => {
@@ -99,15 +101,12 @@ setBrowserIcon = (type) => {
 
 addOneMinute = () => {
   let duration = localStorage.getItem('duration');
-  duration = null === duration ? 1 : 1 * duration + (intervalCheckCurrentWebsite / 60000);
+  duration = null === duration ? 1 : 1 * duration + 1;
   localStorage.setItem('duration', duration);
-
-  setTimePerOrigin(lastUrl, intervalCheckCurrentWebsite / 60000);
 };
 
 let addOneMinuteInterval;
-const intervalCheckCurrentWebsite = 30000;
-
+let addOneSecondInterval;
 
 handleMessage = (request) => {
   if ('start' === request.action) {
@@ -121,7 +120,10 @@ handleMessage = (request) => {
     );
 
     if (!addOneMinuteInterval) {
-      addOneMinuteInterval = setInterval(addOneMinute, intervalCheckCurrentWebsite);
+      addOneMinuteInterval = setInterval(addOneMinute, 60000);
+    }
+    if (!addOneSecondInterval) {
+      addOneSecondInterval = setInterval(setTimePerOrigin, 1000);
     }
 
     return;
@@ -135,26 +137,27 @@ handleMessage = (request) => {
       clearInterval(addOneMinuteInterval);
       addOneMinuteInterval = null;
     }
+    if (addOneMinuteInterval) {
+      clearInterval(addOneSecondInterval);
+      addOneSecondInterval = null;
+    }
   }
 };
 
-let activeTabId, lastUrl, lastTitle;
+var currentTab;
 
-function getTabInfo(tabId) {
+function setTabInfo(tabId) {
   chrome.tabs.get(tabId, function (tab) {
-    lastUrl = extractHostname(tab.url);
-    lastTitle = tab.title;
+    currentTab = extractHostname(tab.url);
   });
 }
 
 chrome.tabs.onActivated.addListener(function (activeInfo) {
-  getTabInfo(activeTabId = activeInfo.tabId);
+  setTabInfo(activeTabId = activeInfo.tabId);
 });
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-  if (activeTabId == tabId) {
-    getTabInfo(tabId);
-  }
+    setTabInfo(tabId);
 });
 
 chrome.runtime.onMessage.addListener(handleMessage);

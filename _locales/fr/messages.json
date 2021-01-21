@@ -130,5 +130,14 @@
     },
     "whitelistExplained": {
         "message": "Si la whitelist est activée seul les sites listés si-dessous seront pris en compte"
+    },
+    "website": {
+        "message": "Site"
+    },
+    "timeInSec": {
+        "message": "Temps (secs)"
+    },
+    "dataInMo": {
+        "message": "Data (Mo)"
     }
 }
