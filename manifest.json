@@ -8,7 +8,6 @@
     "48": "icons/icon-on-48.png"
   },
   "permissions": [
-    "storage",
     "webRequest",
     "<all_urls>",
     "tabs"
