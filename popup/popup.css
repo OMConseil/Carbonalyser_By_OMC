@@ -110,7 +110,7 @@ hr {
     background-size: 20px;
     background-color: orange;
     padding-left: 26px;
-    margin-left: 190px;
+    margin-left: 180px;
 }
 
 #sortDataButton {
@@ -127,13 +127,6 @@ hr {
     padding-left: 26px;
 }
 
-#exportButton {
-    background: url('img/export.svg') no-repeat 4px 5px;
-    background-size: 20px;
-    background-color: orange;
-    padding-left: 26px;
-}
-
 #returnButton {
     background: url('img/return.svg') no-repeat 6px 6px;
     background-size: 15px;
@@ -145,6 +138,11 @@ hr {
     background-size: 20px;
     background-color: orange;
     padding-left: 26px;
+}
+
+#dataTable{
+    margin-bottom: 5px;
+    margin-right: 5px;
 }
 
 #statsListItems {

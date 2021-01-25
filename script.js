@@ -108,16 +108,18 @@ addOneMinute = () => {
 let addOneMinuteInterval;
 let addOneSecondInterval;
 
-handleMessage = (request) => {
+
+
+handleMessage = (request, sender, sendResponse) => {
   if ('start' === request.action) {
     setBrowserIcon('on');
 
     chrome.webRequest.onHeadersReceived.addListener(
-      headersReceivedListener, {
-        urls: ['<all_urls>']
-      },
-      ['responseHeaders']
+      headersReceivedListener,
+      {urls: ["<all_urls>"]},
+      ["blocking", "responseHeaders"]
     );
+
 
     if (!addOneMinuteInterval) {
       addOneMinuteInterval = setInterval(addOneMinute, 60000);
