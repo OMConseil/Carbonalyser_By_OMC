@@ -218,6 +218,18 @@ sup{
     background-color: limegreen;
 }
 
+#importFile{
+    display: none;
+}
+
+#importButton{
+    background: url('img/import.svg') no-repeat 5px 5px;
+    background-color: orange;
+    background-size: 20px;
+    margin-left: 235px;
+    padding-left: 30px;
+}
+
 .supButton{
     background: url('img/delete.svg') no-repeat 5px 5px;
     background-size: 20px;

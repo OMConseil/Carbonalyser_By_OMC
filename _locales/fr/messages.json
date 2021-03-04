@@ -139,5 +139,8 @@
     },
     "dataInMo": {
         "message": "Data (Mo)"
+    },  
+    "importW": {
+        "message": "Importer une whitelist"
     }
 }
