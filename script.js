@@ -56,7 +56,13 @@ setTimePerOrigin = () => {
   }
 };
 
+isChrome = () => {
+  return (typeof (browser) === 'undefined');
+};
+
 headersReceivedListener = (requestDetails) => {
+
+  if (isChrome()) {
     const origin = extractHostname(!requestDetails.initiator ? requestDetails.url : requestDetails.initiator);
     const responseHeadersContentLength = requestDetails.responseHeaders.find(element => element.name.toLowerCase() === "content-length");
     const contentLength = undefined === responseHeadersContentLength ? {
@@ -67,6 +73,22 @@ headersReceivedListener = (requestDetails) => {
     setByteLengthPerOrigin(origin, requestSize);
 
     return {};
+  }
+
+  let filter = browser.webRequest.filterResponseData(requestDetails.requestId);
+
+  filter.ondata = event => {
+    const origin = extractHostname(!requestDetails.originUrl ? requestDetails.url : requestDetails.originUrl);
+    setByteLengthPerOrigin(origin, event.data.byteLength);
+
+    filter.write(event.data);
+  };
+
+  filter.onstop = () => {
+    filter.disconnect();
+  };
+
+  return {};
 };
 
 setBrowserIcon = (type) => {

@@ -142,5 +142,15 @@
     },  
     "importW": {
         "message": "Importer une whitelist"
+    },
+    "websiteDataTable": {
+        "message": "Site"
+    },
+    "timeDataTable": {
+        "message": "Temps (secs)"
+    },
+    "DataDataTable":{
+        "message": "Data (Mo)"
     }
+
 }
