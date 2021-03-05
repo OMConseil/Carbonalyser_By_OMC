@@ -57,20 +57,19 @@ goToHome = () => {
     document.location.href = 'popup.html';
 }
 
-whitelistOff = () => {
+whitelistOn = () => {
     show(onButton);
     hide(offButton);
     localStorage.setItem('whitelistState', 'ON')
 }
 
-whitelistOn = () => {
+whitelistOff = () => {
     show(offButton);
     hide(onButton);
     localStorage.setItem('whitelistState', 'OFF')
 }
 
-addWebsiteToWhitelist = () => {
-    var website = addSiteTextBox.value;
+addWebsiteToWhitelist = (website) => {
     var whitelist = getWhitelist();
 
     whitelist[website] = "1";
@@ -78,7 +77,10 @@ addWebsiteToWhitelist = () => {
     localStorage.setItem('whitelist', JSON.stringify(whitelist));
     addSiteTextBox.value = "";
     showWhiteListTable();
+}
 
+addWebsiteToWhitelistFromInput = () => {
+    addWebsiteToWhitelist(addSiteTextBox.value);
 }
 
 removeWebsiteFromWhitelist = (website) => {
@@ -100,13 +102,13 @@ const returnButton = document.getElementById('returnButton');
 returnButton.addEventListener('click', goToHome);
 
 const onButton = document.getElementById('onButton');
-onButton.addEventListener('click', whitelistOn);
+onButton.addEventListener('click', whitelistOff);
 
 const offButton = document.getElementById('offButton');
-offButton.addEventListener('click', whitelistOff);
+offButton.addEventListener('click', whitelistOn);
 
 const addSiteButton = document.getElementById('addSiteButton');
-addSiteButton.addEventListener('click', addWebsiteToWhitelist);
+addSiteButton.addEventListener('click', addWebsiteToWhitelistFromInput);
 
 const addSiteTextBox = document.getElementById('addSiteTextBox');
 

@@ -30,6 +30,29 @@ checkWhitelist = (origin) => {
 
 }
 
+readFile = function (file) {
+  var reader = new FileReader();
+  reader.onload = function () {
+     var csvContent = reader.result.split("\r\n");
+     for (var i = 0; i < csvContent.length-1; i++){
+      addWebsiteToWhitelist(csvContent[i]);
+     }
+     
+  };
+  
+  reader.readAsBinaryString(file);
+};
+
+addWebsiteToWhitelist = (website) => {
+  var whitelist = getWhitelist();
+  whitelist[website] = "1";
+  localStorage.setItem('whitelist', JSON.stringify(whitelist));
+}
+
+getWhitelist = () => {
+  const whitelist = localStorage.getItem('whitelist');
+  return null === whitelist ? {} : JSON.parse(whitelist);
+}
 
 setByteLengthPerOrigin = (origin, byteLength) => {
   if (checkWhitelist(origin)) {
@@ -57,13 +80,12 @@ setTimePerOrigin = () => {
   }
 };
 
-
-
 isChrome = () => {
   return (typeof (browser) === 'undefined');
 };
 
 headersReceivedListener = (requestDetails) => {
+
   if (isChrome()) {
     const origin = extractHostname(!requestDetails.initiator ? requestDetails.url : requestDetails.initiator);
     const responseHeadersContentLength = requestDetails.responseHeaders.find(element => element.name.toLowerCase() === "content-length");
@@ -107,13 +129,12 @@ addOneMinute = () => {
 
 let addOneMinuteInterval;
 let addOneSecondInterval;
+let addFocusInterval;
+let pauseStatus = "unpaused";
+let userState = "active";
 
-
-
-handleMessage = (request, sender, sendResponse) => {
-  if ('start' === request.action) {
+startAnalyse = () => {
     setBrowserIcon('on');
-
     chrome.webRequest.onHeadersReceived.addListener(
       headersReceivedListener,
       {urls: ["<all_urls>"]},
@@ -127,22 +148,62 @@ handleMessage = (request, sender, sendResponse) => {
     if (!addOneSecondInterval) {
       addOneSecondInterval = setInterval(setTimePerOrigin, 1000);
     }
-
+    if (!addFocusInterval) {
+      addFocusInterval = setInterval(checkFocus, 1000);
+    }
+    
     return;
+};
+
+pause = () => {
+  if (addOneMinuteInterval) {
+    clearInterval(addOneMinuteInterval);
+    addOneMinuteInterval = null;
+  }
+  if (addOneSecondInterval) {
+    clearInterval(addOneSecondInterval);
+    addOneSecondInterval = null;
+  }
+  pauseStatus = "paused";
+};
+
+stopAnalyse = () => {
+  setBrowserIcon('off');
+  chrome.webRequest.onHeadersReceived.removeListener(headersReceivedListener);
+
+  if (addOneMinuteInterval) {
+    clearInterval(addOneMinuteInterval);
+    addOneMinuteInterval = null;
+  }
+  if (addOneSecondInterval) {
+    clearInterval(addOneSecondInterval);
+    addOneSecondInterval = null;
+  }if (addFocusInterval) {
+    addFocusInterval = null;
+  }
+};
+
+unpause = () => {
+  if (!addOneMinuteInterval) {
+    addOneMinuteInterval = setInterval(addOneMinute, 60000);
+  }
+ 
+  if (!addOneSecondInterval) {
+    
+    addOneSecondInterval = setInterval(setTimePerOrigin, 1000);
+  }
+  pauseStatus = "unpaused";
+  return;
+};
+
+handleMessage = (request) => {
+
+  if ('start' === request.action) {
+    startAnalyse();
   }
 
   if ('stop' === request.action) {
-    setBrowserIcon('off');
-    chrome.webRequest.onHeadersReceived.removeListener(headersReceivedListener);
-
-    if (addOneMinuteInterval) {
-      clearInterval(addOneMinuteInterval);
-      addOneMinuteInterval = null;
-    }
-    if (addOneMinuteInterval) {
-      clearInterval(addOneSecondInterval);
-      addOneSecondInterval = null;
-    }
+    stopAnalyse();
   }
 };
 
@@ -151,6 +212,26 @@ var currentTab;
 function setTabInfo(tabId) {
   chrome.tabs.get(tabId, function (tab) {
     currentTab = extractHostname(tab.url);
+  });
+}
+chrome.idle.setDetectionInterval(15);
+chrome.idle.onStateChanged.addListener(function (state) {
+
+  if((state === "locked" || state === "idle") && pauseStatus === "unpaused"){
+    userState= "idle";
+  }else if (state === "active" && pauseStatus === "paused"){
+    userState= "active";
+  }
+
+});
+
+function checkFocus() {
+  chrome.windows.getLastFocused(function(window) {
+      if(window.focused.toString() === "true" && pauseStatus === "paused" && userState === "active"){
+        unpause();
+      }else if((window.focused.toString() === "false" || userState === "idle") && pauseStatus === "unpaused"){
+        pause();
+      }
   });
 }
 

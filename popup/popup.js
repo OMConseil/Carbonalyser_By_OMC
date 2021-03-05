@@ -220,7 +220,6 @@ clearDataTable = () => {
     }
 }
 
-
 start = () => {
     chrome.runtime.sendMessage({
         action: 'start'

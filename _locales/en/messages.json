@@ -135,5 +135,18 @@
 },
 "dataInMo": {
     "message": "Data (MB)"
+},  
+"importW": {
+    "message": "Import a whitelist"
+},
+"websiteDataTable": {
+  "message": "Website"
+},
+"timeDataTable": {
+  "message": "Time (secs)"
+},
+"DataDataTable":{
+  "message": "Data (MB)"
 }
+
 }
